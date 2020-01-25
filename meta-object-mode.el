@@ -6,14 +6,6 @@
     (when (= p (point))
       (beginning-of-line 0))))
 
-(defun my/begin-prev-line ()
-  "If at the beginning of line move to previous line else move to beginning of line."
-  (interactive)
-  (let ((p (point)))
-    (beginning-of-line)
-    (when (= p (point))
-      (beginning-of-line 0))))
-
 (defun my/end-next-line ()
   "If at the beginning of line move to previous line else move to beginning of line."
   (interactive)
@@ -21,6 +13,13 @@
     (end-of-line)
     (when (= p (point))
       (end-of-line 2))))
+
+(defun meta-object-kill ()
+  "Kill the current meta object."
+  (interactive)
+  (if (region-active-p)
+      (kill-region (region-beginning) (region-end))
+    (kill-word 1)))
 
 
 (bind-key "M-e" #'previous-line)
@@ -35,17 +34,16 @@
 (bind-key "M-s" #'backward-char)
 (unbind-key "C-b")
 (unbind-key "<left>")
-(bind-key "M-f" #'forward-word)
-(unbind-key "M-f")
+(bind-key "M-r" #'forward-word)
 (bind-key "M-w" #'backward-word)
 (unbind-key "M-b")
 (bind-key "M-q" #'my/begin-prev-line)
 (unbind-key "C-a")
 (bind-key "M-a" #'my/end-next-line)
 (unbind-key "C-e")
-(bind-key "C-e" #'kill-ring-save)
+(bind-key "M-c" #'kill-ring-save)
 (bind-key "M-'" #'helm-M-x)
-(bind-key "M-x" #'kill-word)
+(bind-key "M-x" #'meta-object-kill)
 (bind-key "M-v" #'helm-show-kill-ring)
 (bind-key "C-v" #'yank)
 (unbind-key "C-y")
