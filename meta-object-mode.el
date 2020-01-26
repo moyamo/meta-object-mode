@@ -1,7 +1,31 @@
 ;; -*- lexical-binding: t -*-
 
+
+;; TODO make meta objects for everything in thingatpt
+
 (defvar meta-object-emulation-keymap (make-sparse-keymap))
 (defvar meta-object-emulation-alist `((meta-object-mode . ,meta-object-emulation-keymap)))
+
+(defface meta-object-primary-face
+  '((t (:background "darkslategray")))
+  "TODO Doc"
+  :group 'meta-object)
+
+
+(defvar meta-object--primary-overlay nil)
+(make-variable-buffer-local 'meta-object--primary-overlay)
+(set-default 'meta-object--primary-overlay nil)
+
+(defun meta-object--update-primary-overlay ()
+  (when (not (overlayp meta-object--primary-overlay))
+    (setq meta-object--primary-overlay (make-overlay (point) (point)))
+    (overlay-put meta-object--primary-overlay 'face 'meta-object-primary-face))
+  (let ((bounds (bounds-of-thing-at-point 'word)))
+    (if (not bounds)
+        (move-overlay meta-object--primary-overlay (point) (point)) ; empty overlay
+      (let ((begin  (car bounds))
+            (end    (cdr bounds)))
+        (move-overlay meta-object--primary-overlay begin end)))))
 
 ;;;###autoload
 (define-minor-mode meta-object-mode
@@ -12,6 +36,7 @@
   :global t
   (when meta-object-mode
     (add-to-list 'emulation-mode-map-alists 'meta-object-emulation-alist)
+    (add-hook 'post-command-hook #'meta-object--update-primary-overlay)
     ;; Company keys because company uses emulation mode too
     ;; TODO undo this when we disable the mode and remove the M-p and M-n bindings
     (defun meta-object-bind-company ()
@@ -19,7 +44,9 @@
       (bind-key "M-a" #'company-select-next company-active-map))
     (when (featurep 'company)
       (meta-object-bind-company))
-    (add-hook 'company-mode-hook #'meta-object-bind-company)))
+    (add-hook 'company-mode-hook #'meta-object-bind-company))
+  (when (not meta-object-mode)
+    (remove-hook 'post-command-hook #'meta-object--update-primary-overlay)))
 
 (defun my/begin-prev-line ()
   "If at the beginning of line move to previous line else move to beginning of line."
