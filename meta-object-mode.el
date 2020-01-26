@@ -52,10 +52,14 @@
   (let ((meta-object-mode nil))
     (key-binding (kbd key))))
 
+;; n and p are after C-n and C-p because n and p usually do more complicated things
+;; when n and p are not self-insert but C-n and C-p pretty much always down and up line
 (defvar down-keys '("C-n" "n" "M-n" "C-c n" "C-c C-n" "C-c M-n"))
 (defvar up-keys '("C-p" "p" "M-p" "C-c p" "C-c C-p" "C-c M-p"))
-(defvar forward-keys '("C-f" "f" "M-f" "C-c f" "C-c C-f" "C-c M-f"))
-(defvar backward-keys '("C-b" "b" "M-b" "C-c b" "C-c C-b" "C-c M-b"))
+;; We don't have f and b here because f and b usually do weird things unrelated
+;; to forward and backward when they are not self-insert
+(defvar forward-keys '("C-f" "M-f" "C-c f" "C-c C-f" "C-c M-f"))
+(defvar backward-keys '("C-b" "M-b" "C-c b" "C-c C-b" "C-c M-b"))
 
 (defun meta-object--is-real-command (symb)
   (if (not symb)
