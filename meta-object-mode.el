@@ -129,6 +129,16 @@
 (meta-object-make-default-command meta-object-primary-forward forward-keys (lambda (x) (> 2 (length x))) #'forward-word cadr)
 (meta-object-make-default-command meta-object-primary-backward backward-keys (lambda (x) (> 2 (length x))) #'backward-word cadr)
 
+(defun meta-object-line-mode ()
+  (interactive)
+  (bind-key "M-w" #'my/begin-prev-line meta-object-emulation-keymap)
+  (bind-key "M-r" #'my/end-next-line meta-object-emulation-keymap))
+
+(defun meta-object-default-mode ()
+  (interactive)
+  (bind-key "M-w" #'meta-object-primary-backward meta-object-emulation-keymap)
+  (bind-key "M-r" #'meta-object-primary-forward meta-object-emulation-keymap))
+
 
 (defun meta-object-unbind-standard-keys ()
   "Unbind the standard Emacs keys that have been replaced by meta-object keys.
@@ -181,7 +191,9 @@ relying on old habits."
   (bind-key "M-v" #'helm-show-kill-ring meta-object-emulation-keymap)
   (bind-key "C-v" #'yank meta-object-emulation-keymap)
   (bind-key "M-z" #'set-mark-command meta-object-emulation-keymap)
-  (bind-key "M-B" #'fill-paragraph meta-object-emulation-keymap))
+  (bind-key "M-B" #'fill-paragraph meta-object-emulation-keymap)
+  (bind-key "M-l" #'meta-object-line-mode meta-object-emulation-keymap)
+  (bind-key "M-j" #'meta-object-default-mode meta-object-emulation-keymap))
 
 (meta-object-unbind-standard-keys)
 (meta-object-bind-keys)
