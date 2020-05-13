@@ -16,11 +16,13 @@
 (make-variable-buffer-local 'meta-object--primary-overlay)
 (set-default 'meta-object--primary-overlay nil)
 
+(defvar meta-object--thing 'word)
+
 (defun meta-object--update-primary-overlay ()
   (when (not (overlayp meta-object--primary-overlay))
     (setq meta-object--primary-overlay (make-overlay (point) (point)))
     (overlay-put meta-object--primary-overlay 'face 'meta-object-primary-face))
-  (let ((bounds (bounds-of-thing-at-point 'word)))
+  (let ((bounds (bounds-of-thing-at-point meta-object--thing)))
     (if (not bounds)
         (move-overlay meta-object--primary-overlay (point) (point)) ; empty overlay
       (let ((begin  (car bounds))
@@ -132,12 +134,14 @@
 (defun meta-object-line-mode ()
   (interactive)
   (bind-key "M-w" #'my/begin-prev-line meta-object-emulation-keymap)
-  (bind-key "M-r" #'my/end-next-line meta-object-emulation-keymap))
+  (bind-key "M-r" #'my/end-next-line meta-object-emulation-keymap)
+  (setq meta-object--thing 'line))
 
 (defun meta-object-default-mode ()
   (interactive)
   (bind-key "M-w" #'meta-object-primary-backward meta-object-emulation-keymap)
-  (bind-key "M-r" #'meta-object-primary-forward meta-object-emulation-keymap))
+  (bind-key "M-r" #'meta-object-primary-forward meta-object-emulation-keymap)
+  (setq meta-object--thing 'word))
 
 
 (defun meta-object-unbind-standard-keys ()
