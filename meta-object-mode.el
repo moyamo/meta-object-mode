@@ -73,6 +73,14 @@
       (kill-region (region-beginning) (region-end))
     (kill-word 1)))
 
+(defun meta-object-kill-whole-line ()
+  "Kill the current meta object."
+  (interactive)
+  (if (region-active-p)
+      (kill-region (region-beginning) (region-end))
+    (kill-whole-line)))
+
+
 (defun meta-object-bad-key ()
   (interactive)
   (message "Bad key don't use it"))
@@ -135,12 +143,14 @@
   (interactive)
   (bind-key "M-w" #'my/begin-prev-line meta-object-emulation-keymap)
   (bind-key "M-r" #'my/end-next-line meta-object-emulation-keymap)
+  (bind-key "M-x" #'meta-object-kill-whole-line meta-object-emulation-keymap)
   (setq meta-object--thing 'line))
 
 (defun meta-object-default-mode ()
   (interactive)
   (bind-key "M-w" #'meta-object-primary-backward meta-object-emulation-keymap)
   (bind-key "M-r" #'meta-object-primary-forward meta-object-emulation-keymap)
+  (bind-key "M-x" #'meta-object-kill meta-object-emulation-keymap)
   (setq meta-object--thing 'word))
 
 
