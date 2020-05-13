@@ -71,6 +71,8 @@
   (interactive)
   (if (region-active-p)
       (kill-region (region-beginning) (region-end))
+    (when (bounds-of-thing-at-point 'word)
+      (goto-char (car (bounds-of-thing-at-point 'word))))
     (kill-word 1)))
 
 (defun meta-object-kill-whole-line ()
