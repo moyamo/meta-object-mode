@@ -69,11 +69,19 @@
 (defun meta-object-kill ()
   "Kill the current meta object."
   (interactive)
-  (if (region-active-p)
+  (if (user-region-p)
       (kill-region (region-beginning) (region-end))
     (when (bounds-of-thing-at-point 'word)
       (goto-char (car (bounds-of-thing-at-point 'word))))
     (kill-word 1)))
+
+(defun meta-object-kill-ring-save ()
+  "Save the current meta object"
+  (interactive)
+  (if (use-region-p)
+      (kill-ring-save (region-beginning) (region-end))
+    (when-let ((bounds (bounds-of-thing-at-point meta-object--thing)))
+      (kill-ring-save (car bounds) (cdr bounds)))))
 
 (defun meta-object-kill-whole-line ()
   "Kill the current meta object."
@@ -201,7 +209,7 @@ relying on old habits."
   (bind-key "M-w" #'meta-object-primary-backward meta-object-emulation-keymap)
   (bind-key "M-q" #'meta-object-secondary-up meta-object-emulation-keymap)
   (bind-key "M-a" #'meta-object-secondary-down meta-object-emulation-keymap)
-  (bind-key "M-c" #'kill-ring-save meta-object-emulation-keymap)
+  (bind-key "M-c" #'meta-object-kill-ring-save meta-object-emulation-keymap)
   (bind-key "M-'" #'helm-M-x meta-object-emulation-keymap)
   (bind-key "M-x" #'meta-object-kill meta-object-emulation-keymap)
   (bind-key "M-v" #'helm-show-kill-ring meta-object-emulation-keymap)
