@@ -69,7 +69,7 @@
 (defun meta-object-kill ()
   "Kill the current meta object."
   (interactive)
-  (if (user-region-p)
+  (if (use-region-p)
       (kill-region (region-beginning) (region-end))
     (when (bounds-of-thing-at-point 'word)
       (goto-char (car (bounds-of-thing-at-point 'word))))
