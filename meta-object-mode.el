@@ -198,6 +198,8 @@ relying on old habits."
     ;; Secondary up and down
     "M-n"
     "M-p"
+    ;; Kill Line
+    "C-k"
     )))
 
 (defun meta-object-bind-keys ()
