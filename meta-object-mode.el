@@ -114,20 +114,26 @@
     (let ((name (if (symbolp symb) (symbol-name symb) "Sometimes the command is not a symbol")))
       (if (string-match-p ".*self-insert.*" name)
           nil
-        t))))
+        (commandp symb)))))
 
-(defun meta-object--get-real-commands (keylist)
+(defun meta-object--is-real-command-pair (p)
+  (and (meta-object--is-real-command (car p))
+       (meta-object--is-real-command (cdr p))))
+
+(defun meta-object--get-real-commands (keylist cokeylist)
   (-distinct
-   (-filter #'commandp
-            (-filter #'meta-object--is-real-command
-                     (-map #'meta-object--get-usual-key keylist)))))
+   (-map #'car
+         (-filter #'meta-object--is-real-command-pair
+                  (-zip-pair
+                   (-map #'meta-object--get-usual-key keylist)
+                   (-map #'meta-object--get-usual-key cokeylist))))))
 
-(defmacro meta-object-make-default-command (command-name key-list default-condition default-command getter)
+(defmacro meta-object-make-default-command (command-name key-list co-keylist default-condition default-command getter)
   (let ((options (gensym "options"))
         (command (gensym "command")))
       `(defun ,command-name ()
          (interactive)
-         (let ((,options (meta-object--get-real-commands ,key-list))
+         (let ((,options (meta-object--get-real-commands ,key-list ,co-keylist))
                ,command)
            (message "Keys are %s" ,options)
            (setq ,command (if (,default-condition ,options)
@@ -138,16 +144,16 @@
            (setq this-command ,command)
            (call-interactively ,command)))))
 
-(meta-object-make-default-command meta-object-down down-keys null #'next-line car)
-(meta-object-make-default-command meta-object-up up-keys null #'previous-line car)
-(meta-object-make-default-command meta-object-forward forward-keys null #'forward-char car)
-(meta-object-make-default-command meta-object-backward backward-keys null #'backward-char car)
+(meta-object-make-default-command meta-object-down down-keys up-keys null #'next-line car)
+(meta-object-make-default-command meta-object-up up-keys down-keys null #'previous-line car)
+(meta-object-make-default-command meta-object-forward forward-keys backward-keys null #'forward-char car)
+(meta-object-make-default-command meta-object-backward backward-keys forward-keys null #'backward-char car)
 
 
-(meta-object-make-default-command meta-object-secondary-down down-keys (lambda (x) (> 2 (length x))) #'my/end-next-line cadr)
-(meta-object-make-default-command meta-object-secondary-up up-keys (lambda (x) (> 2 (length x))) #'my/begin-prev-line cadr)
-(meta-object-make-default-command meta-object-primary-forward forward-keys (lambda (x) (> 2 (length x))) #'forward-word cadr)
-(meta-object-make-default-command meta-object-primary-backward backward-keys (lambda (x) (> 2 (length x))) #'backward-word cadr)
+(meta-object-make-default-command meta-object-secondary-down down-keys up-keys (lambda (x) (> 2 (length x))) #'my/end-next-line cadr)
+(meta-object-make-default-command meta-object-secondary-up up-keys down-keys (lambda (x) (> 2 (length x))) #'my/begin-prev-line cadr)
+(meta-object-make-default-command meta-object-primary-forward forward-keys backward-keys (lambda (x) (> 2 (length x))) #'forward-word cadr)
+(meta-object-make-default-command meta-object-primary-backward backward-keys forward-keys (lambda (x) (> 2 (length x))) #'backward-word cadr)
 
 (defun meta-object-line-mode ()
   (interactive)
