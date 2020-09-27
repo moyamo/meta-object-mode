@@ -11,10 +11,10 @@
   "TODO Doc"
   :group 'meta-object)
 
-
+;; This is not buffer local because it is weird when the highlight shows in an
+;; unfocused buffer. Additional buffer local variable get cleared when the major
+;; mode changes which causes the overlay to stick around.
 (defvar meta-object--primary-overlay nil)
-(make-variable-buffer-local 'meta-object--primary-overlay)
-(set-default 'meta-object--primary-overlay nil)
 
 (defvar meta-object--thing 'word)
 
@@ -24,10 +24,10 @@
     (overlay-put meta-object--primary-overlay 'face 'meta-object-primary-face))
   (let ((bounds (bounds-of-thing-at-point meta-object--thing)))
     (if (not bounds)
-        (move-overlay meta-object--primary-overlay (point) (point)) ; empty overlay
+        (move-overlay meta-object--primary-overlay (point) (point) (current-buffer)) ; empty overlay
       (let ((begin  (car bounds))
             (end    (cdr bounds)))
-        (move-overlay meta-object--primary-overlay begin end)))))
+        (move-overlay meta-object--primary-overlay begin end (current-buffer))))))
 
 ;;;###autoload
 (define-minor-mode meta-object-mode
