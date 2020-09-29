@@ -1,8 +1,21 @@
-;; -*- lexical-binding: t -*-
+# Expand noweb <<>> when evaling, tangling but not exporting
+#+PROPERTY: header-args :noweb no-export
 
+# Type C-c C-v C-t to tangle the files. Remember to tangle before committing
+
+#+NAME: Comment
+#+begin_src emacs-lisp
 ;; This program is a literate programming written using org-babel. Instead of
 ;; reading this tangled elisp file consider reading meta-object-mode.org
+#+end_src
 
+* Blob
+I'm in the process of converting this to a literate file. For now this big blob
+will just remain. Please do not add anything to the big blob. Rather remove it
+and put it in a header above so that this file becomes more literate over time.
+
+#+NAME: Body
+#+begin_src emacs-lisp
 ;; TODO make meta objects for everything in thingatpt
 
 (defvar meta-object-emulation-keymap (make-sparse-keymap))
@@ -234,3 +247,21 @@ relying on old habits."
 
 (provide 'meta-object-mode)
 ;;; meta-object-mode.el ends here
+#+end_src
+
+* Appendix
+** Structure of meta-object-mode.el
+#+begin_src emacs-lisp :tangle meta-object-mode.el
+<<Header>>
+
+<<Comment>>
+
+<<Body>>
+#+end_src
+
+** Header
+Use lexical binding, because Scheme > Common Lisp
+#+NAME: Header
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t -*-
+#+end_src
