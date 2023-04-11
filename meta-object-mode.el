@@ -5,6 +5,8 @@
 
 ;; TODO make meta objects for everything in thingatpt
 
+(require 'bind-key)
+
 (defvar meta-object-emulation-keymap (make-sparse-keymap))
 (defvar meta-object-emulation-alist `((meta-object-mode . ,meta-object-emulation-keymap)))
 
